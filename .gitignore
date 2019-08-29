@@ -1,0 +1,9 @@
+# CLion cmake dir
+cmake-build-debug/
+
+# Build and bin directory
+build/
+bin/
+
+# Idea
+.idea/
