@@ -40,12 +40,19 @@ class AdvancedSpellChecker : public SpellChecker {
     std::vector<std::string> spell_check(const std::string &data);
 };
 
-
 class StorageManager {
-    void save_as_text(const std::string &loc,
-            const TextData &text_data);
-    void save_as_pdf(const std::string &loc,
-            const TextData &text_data);
+    virtual int save(const std::string &loc,
+            const TextData &text_data) = 0;
+};
+
+class TextFileStorageManager : public StorageManager {
+    int save(const std::string &loc,
+             const TextData &text_data);
+};
+
+class PdfFileStorageManager : public StorageManager {
+    int save(const std::string &loc,
+             const TextData &text_data);
 };
 
 #endif //DESIGNPATTERNS_DELEGATE_HPP
