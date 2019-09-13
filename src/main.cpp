@@ -1,4 +1,5 @@
 #include <iostream>
+#include <strategy.hpp>
 #include "composite.hpp"
 #include "delegate.hpp"
 
@@ -58,8 +59,15 @@ void composite()
               home->get_size() << std::endl;
 }
 
+void strategy()
+{
+    std::unique_ptr<FilesPurger> fp =
+            std::make_unique<SZFilesPurger>(10);
+    DiskJanitor dj(std::move(fp));
+    dj.clean_files("/Users/rajkumar.p/tmp", true);
+}
+
 int main(int argc, char* argv[]) {
-    delegate();
-    composite();
+    strategy();
     return 0;
 }

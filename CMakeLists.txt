@@ -16,7 +16,10 @@ set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -Wall -Wextra")
 # Setup include directories
 include_directories(include)
 
-add_executable(dp src/main.cpp include/delegate.hpp src/delegate.cpp src/composite.cpp include/composite.hpp)
+add_executable(dp src/main.cpp include/delegate.hpp src/delegate.cpp src/composite.cpp include/composite.hpp
+        src/strategy.cpp include/strategy.hpp)
+
+target_link_libraries(dp c++fs)
 
 set_target_properties(dp PROPERTIES RUNTIME_OUTPUT_DIRECTORY_DEBUG ${CMAKE_SOURCE_DIR}/bin/debug)
 set_target_properties(dp PROPERTIES RUNTIME_OUTPUT_DIRECTORY_RELEASE ${CMAKE_SOURCE_DIR}/bin/release)
