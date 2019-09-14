@@ -1,5 +1,4 @@
 #include <experimental/filesystem>
-#include <iostream>
 #include <sys/stat.h>
 #include "strategy.hpp"
 
