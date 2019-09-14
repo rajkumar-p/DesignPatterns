@@ -9,9 +9,9 @@ DiskJanitor::DiskJanitor(std::unique_ptr<FilesPurger> purger)
 
 }
 
-void DiskJanitor::clean_files(const std::string &root, bool recursive)
+void DiskJanitor::clean_files(const std::string &root)
 {
-    _purger->purge(root, recursive);
+    _purger->purge(root);
 }
 
 FilesPurger::~FilesPurger()
@@ -25,9 +25,28 @@ MTFilesPurger::MTFilesPurger(const time_t rel_time)
 
 }
 
-void MTFilesPurger::purge(const std::string &root, bool recursive)
+void MTFilesPurger::purge(const std::string &root)
 {
+    namespace fs = std::experimental::filesystem;
+    fs::path root_path(root);
+    if (fs::exists(root_path) && fs::is_directory(root_path)) {
+        for (const fs::directory_entry &entry :
+                fs::recursive_directory_iterator(root_path)) {
+            if (entry.is_directory()) {
+                continue;
+            }
 
+            std::string path = entry.path();
+            struct stat st;
+            if (stat(path.c_str(), &st) != -1) {
+                time_t at = st.st_mtimespec.tv_sec;
+                double diff = difftime(at, _rel_time);
+                if (diff < 0) {
+                    fs::remove(path);
+                }
+            }
+        }
+    }
 }
 
 ATFilesPurger::ATFilesPurger(const time_t rel_time)
@@ -36,9 +55,28 @@ ATFilesPurger::ATFilesPurger(const time_t rel_time)
 
 }
 
-void ATFilesPurger::purge(const std::string &root, bool recursive)
+void ATFilesPurger::purge(const std::string &root)
 {
+    namespace fs = std::experimental::filesystem;
+    fs::path root_path(root);
+    if (fs::exists(root_path) && fs::is_directory(root_path)) {
+        for (const fs::directory_entry &entry :
+                fs::recursive_directory_iterator(root_path)) {
+            if (entry.is_directory()) {
+                continue;
+            }
 
+            std::string path = entry.path();
+            struct stat st;
+            if (stat(path.c_str(), &st) != -1) {
+                time_t at = st.st_atimespec.tv_sec;
+                double diff = difftime(at, _rel_time);
+                if (diff < 0) {
+                    fs::remove(path);
+                }
+            }
+        }
+    }
 }
 
 SZFilesPurger::SZFilesPurger(size_t limit)
@@ -47,23 +85,24 @@ SZFilesPurger::SZFilesPurger(size_t limit)
 
 }
 
-void SZFilesPurger::purge(const std::string &root, bool recursive)
+void SZFilesPurger::purge(const std::string &root)
 {
     namespace fs = std::experimental::filesystem;
     fs::path root_path(root);
     if (fs::exists(root_path) && fs::is_directory(root_path)) {
-        for (const fs::directory_entry &entry : fs::recursive_directory_iterator(root_path)) {
-            std::string path = entry.path();
+        for (const fs::directory_entry &entry :
+                fs::recursive_directory_iterator(root_path)) {
+            if (entry.is_directory()) {
+                continue;
+            }
 
+            std::string path = entry.path();
             struct stat st;
             if (stat(path.c_str(), &st) != -1) {
                 size_t sz = st.st_size;
-                time_t at = st.st_atimespec.tv_sec;
-                time_t mt = st.st_mtimespec.tv_sec;
-
-                std::cout << path << "\t" << sz
-                    << "\t" << at << "\t" << mt
-                    << std::endl;
+                if (sz > _limit) {
+                    fs::remove(path);
+                }
             }
         }
     }

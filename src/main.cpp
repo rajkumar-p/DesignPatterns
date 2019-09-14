@@ -61,13 +61,20 @@ void composite()
 
 void strategy()
 {
-    std::unique_ptr<FilesPurger> fp =
-            std::make_unique<SZFilesPurger>(10);
-    DiskJanitor dj(std::move(fp));
-    dj.clean_files("/Users/rajkumar.p/tmp", true);
+    time_t now;
+    struct tm t;
+
+    time(&now);
+    t = *localtime(&now);
+    t.tm_mon = 0; t.tm_mday = 1;
+    t.tm_hour = 0; t.tm_min = 0; t.tm_sec = 0;
+
+    std::unique_ptr<FilesPurger> purger =
+            std::make_unique<ATFilesPurger>(mktime(&t));
+    DiskJanitor janitor(std::move(purger));
+    janitor.clean_files("/Users/rajkumar.p/tmp");
 }
 
 int main(int argc, char* argv[]) {
-    strategy();
     return 0;
 }
