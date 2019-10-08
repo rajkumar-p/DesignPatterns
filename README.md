@@ -10,7 +10,7 @@ This repo is a slate to various Design Patterns.
 * Targets are copied over to **{Project.Dir}/bin/{Target}/dp**
 
 ## Pre-requisites
-* C++14 compiler. gcc/clang/vc++ later versions support C++14 features. To install one, either build from source or use a package manager for your platform
+* C++17 compiler. gcc/clang/vc++ later versions support C++17 features. To install one, either build from source or use a package manager for your platform. `std::filesystem` needs to be supported by your compiler
 * CMake. Version 3.7.0 or greater. The project uses CMake to generate the build files  
 
 ## Tests

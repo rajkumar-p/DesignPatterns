@@ -1,4 +1,4 @@
-#include <experimental/filesystem>
+#include <filesystem>
 #include <sys/stat.h>
 #include "strategy.hpp"
 
@@ -26,7 +26,7 @@ MTFilesPurger::MTFilesPurger(const time_t rel_time)
 
 void MTFilesPurger::purge(const std::string &root)
 {
-    namespace fs = std::experimental::filesystem;
+    namespace fs = std::filesystem;
     fs::path root_path(root);
     if (fs::exists(root_path) && fs::is_directory(root_path)) {
         for (const fs::directory_entry &entry :
@@ -56,7 +56,7 @@ ATFilesPurger::ATFilesPurger(const time_t rel_time)
 
 void ATFilesPurger::purge(const std::string &root)
 {
-    namespace fs = std::experimental::filesystem;
+    namespace fs = std::filesystem;
     fs::path root_path(root);
     if (fs::exists(root_path) && fs::is_directory(root_path)) {
         for (const fs::directory_entry &entry :
@@ -86,7 +86,7 @@ SZFilesPurger::SZFilesPurger(size_t limit)
 
 void SZFilesPurger::purge(const std::string &root)
 {
-    namespace fs = std::experimental::filesystem;
+    namespace fs = std::filesystem;
     fs::path root_path(root);
     if (fs::exists(root_path) && fs::is_directory(root_path)) {
         for (const fs::directory_entry &entry :
